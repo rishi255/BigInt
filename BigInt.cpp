@@ -26,8 +26,9 @@ BigInt::BigInt (const string& str) : sign(1), n()
 }
 
 // ************ BigInt :: OPERATOR OVERLOADS ***************
-BigInt BigInt::operator + (const BigInt &b) const
+
 // appropriately decides add/sub result considering sign of operands
+BigInt BigInt::operator + (const BigInt &b) const
 {
     if(sign == 0) return b;
     if(b.sign == 0) return *this;
@@ -62,7 +63,6 @@ BigInt BigInt::operator + (const BigInt &b) const
     }
     return sum;
 }
-
 
 // appropriately decides whether to add/sub result considering sign of operands
 BigInt BigInt::operator - (BigInt const &b) const
@@ -128,8 +128,6 @@ BigInt BigInt::operator = (const BigInt &b)
     return *this;
 }
 
-// ************ BigInt :: ALL OTHER METHODS  *************** 
-
 std::ostream& operator <<(std::ostream &o, const BigInt &b)
 {
     if(b.sign == -1)      { o << "-"; }
@@ -148,25 +146,37 @@ std::istream& operator >>(std::istream &in, BigInt &b)
     {
         b.sign = -1;
         b.n.erase(0,1);
+        // // if string is all zeros after the minus sign, then the number is actually zero
+        // if (b.n.find_first_not_of("0") == string::npos) 
+        //     b.sign = 0;
+        
+        // // else do nothing as we trim preceding zeroes later in the function
     }
-    else if (b.n.find_first_not_of("0") == string::npos) // means if all chars in string are zero
+    else if (b.n[0] == '+')
     {
-        b.sign = 0; 
-        b.n = "";
+        b.sign = +1;
+        b.n.erase(0, 1);
     }
-    else b.sign = +1;
+    else    // ADD OTHER INPUT VALIDATION HERE (SHOULD BE ONLY NUMBER, ETC)
+        b.sign = +1;
 
     int i = 0;
-    while(b.n[i] == '0') i++;
-//    cout <<"Before : " << b.n;
+    // count number of preceding zeroes to trim
+    while(b.n[i] == '0') { i++; }
+
+    // cout <<"Before : \"" << b.n << "\"\n";
     b.n.erase(0, i);
-//    cout <<"After :"<<b.n;
+    // cout <<"After : \""  << b.n << "\"\n";
+
+    if (b.n.length() == 0)  // if entire string got trimmed because it was zero, sign is zero
+        b.sign = 0;
 
     /// reverse string (least significant digits stored first)
     b.n.assign(b.n.rbegin(), b.n.rend());
     return in;
 }
 
+// compares BigInts (considering sign and string) and tells whether a < b is true or false
 bool BigInt::operator< (const BigInt &b) const
 {
     if(sign == 0 || b.sign == 0)   
@@ -182,6 +192,7 @@ bool BigInt::operator< (const BigInt &b) const
 
 // ************ FUNCTIONS OUTSIDE BigInt ***************
 
+// compares strings to say which one is greater
 bool lt (const string& s1, const string& s2)
 { return (s1.compare(s2) < 0 ? true : false); }
 

@@ -33,10 +33,10 @@ public:
     bool operator!=(const BigInt &b) const {return !(*this == b);}
 
     bool operator< (const BigInt &b) const;
-/*  bool operator<=(const BigInt &b) const {return *this == b || *this < b;}
+    bool operator<=(const BigInt &b) const {return *this == b || *this < b;}
     bool operator> (const BigInt &b) const {return !(*this <= b);}
     bool operator>=(const BigInt &b) const {return !(*this < b);}
-*/
+
     BigInt      abs()               const {int a = (sign!=0) ? 1 : 0; return BigInt(a, n);}
     BigInt      reverseDigits()     const {std::string t; t.assign(n.rbegin(),n.rend()); return BigInt(sign, t);}
 };
